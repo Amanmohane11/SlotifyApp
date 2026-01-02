@@ -22,4 +22,16 @@ export const styles = StyleSheet.create({
     fontSize: typography.fontSize.md,
     fontWeight: typography.fontWeight.semibold,
   },
+
+  /* ───────── OUTLINE VARIANT ───────── */
+
+  outlineButton: {
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: colors.buttonPrimary,
+  },
+
+  outlineText: {
+    color: colors.buttonPrimary,
+  },
 });

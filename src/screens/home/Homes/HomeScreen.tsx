@@ -1,4 +1,7 @@
 import React from 'react';
+import SalonCard from '../../../components/cards/saloncard/SalonCard';
+import { useNavigation } from '@react-navigation/native';
+
 import {
   View,
   Text,
@@ -10,19 +13,35 @@ import {
 
 import { colors } from '../../../theme/colors';
 import { spacing } from '../../../theme/spacing';
-// import { typography } from '../../theme/typography';
 
 import { styles } from './styles';
+import PastBookings from '../../../sections/pastBook/PastBooking';
+import { pastBookingsData } from '../../../assets/data/salonDetail';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const HomeScreen = () => {
+  const navigation = useNavigation<any>();
   return (
     <ScrollView
       style={styles.container}
       contentContainerStyle={{ paddingBottom: spacing.xxl }}
       showsVerticalScrollIndicator={false}
     >
-      {/* Greeting */}
-      <Text style={styles.greeting}>Hi, Aman</Text>
+      {/* Header */}
+      <View style={styles.headerRow}>
+        <Text style={styles.greeting}>Hi, Aman</Text>
+
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Notifications')}
+          style={styles.notificationButton}
+        >
+          <Ionicons
+            name="notifications-outline"
+            size={24}
+            color={colors.primary}
+          />
+        </TouchableOpacity>
+      </View>
 
       {/* Search Bar */}
       <View style={styles.searchContainer}>
@@ -56,48 +75,47 @@ const HomeScreen = () => {
         ))}
       </View>
 
-      {/* Stats */}
-      <Text style={styles.sectionTitle}>Stats & Trust</Text>
+      {/* Past Bookings - Rebook */}
+      <Text style={styles.sectionTitle}>Rebook from Past Appointments</Text>
 
-      <View style={styles.statsRow}>
-        <View style={styles.statItem}>
-          <Text style={styles.statValue}>1.2M+</Text>
-          <Text style={styles.statLabel}>Appointments</Text>
-        </View>
-
-        <View style={styles.statItem}>
-          <Text style={styles.statValue}>500+</Text>
-          <Text style={styles.statLabel}>Businesses</Text>
-        </View>
-
-        <View style={styles.statItem}>
-          <Text style={styles.statValue}>4.9★</Text>
-          <Text style={styles.statLabel}>Trusted</Text>
-        </View>
-      </View>
+      {pastBookingsData.length > 0 && (
+        <>
+          <Text style={styles.sectionTitle}>Rebook from Past Appointments</Text>
+          <PastBookings data={pastBookingsData} navigation={navigation} />
+        </>
+      )}
 
       {/* Recommended */}
       <Text style={styles.sectionTitle}>Recommended Salons</Text>
 
-      <View style={styles.salonCard}>
-        <Image
-          source={{ uri: 'https://via.placeholder.com/300x180' }}
-          style={styles.salonImage}
-        />
-        <Text style={styles.salonName}>The Golden Comb</Text>
-        <Text style={styles.salonCategory}>Hair & Beauty • Unisex</Text>
-        <Text style={styles.salonRating}>Rating: 4.9 ★</Text>
-      </View>
+      <SalonCard
+        name="The Golden Comb"
+        category="Hair & Beauty"
+        type="Unisex"
+        rating={4.9}
+        imageUrl="https://via.placeholder.com/300x180"
+        onPress={() =>
+          navigation.navigate('SalonDetail', {
+            salonId: '1',
+            salonName: 'The Golden Comb',
+            salonType: 'Unisex',
+          })
+        }
+      />
 
-      <View style={styles.salonCard}>
-        <Image
-          source={{ uri: 'https://via.placeholder.com/300x180' }}
-          style={styles.salonImage}
-        />
-        <Text style={styles.salonName}>Elite Spa & Wellness</Text>
-        <Text style={styles.salonCategory}>Hair & Beauty</Text>
-        <Text style={styles.salonRating}>New</Text>
-      </View>
+      <SalonCard
+        name="Elite Spa & Wellness"
+        category="Hair & Beauty"
+        type="Male Only"
+        imageUrl="https://via.placeholder.com/300x180"
+        onPress={() =>
+          navigation.navigate('SalonDetail', {
+            salonId: '2',
+            salonName: 'Elite Spa & Wellness',
+            salonType: 'Male Only',
+          })
+        }
+      />
     </ScrollView>
   );
 };

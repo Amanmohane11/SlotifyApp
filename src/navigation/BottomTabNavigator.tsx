@@ -1,17 +1,16 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-// import { View, Text } from 'react-native';
 
-// Screens
-import HomeScreen from '../screens/home/Homes/HomeScreen';
-import BookingListScreen from '../screens/bookings/BookingListScreen';
-import FavoritesScreen from '../screens/favorites/FavoritesScreen';
-import NotificationScreen from '../screens/notifications/NotificationScreen';
-import ProfileScreen from '../screens/profile/ProfileScreen';
+// Screens (simple ones only)
+
 
 // Theme
 import { colors } from '../theme/colors';
 import { typography } from '../theme/typography';
+import HomeStackNavigator from './HomeStack';
+import BookingStackNavigator from './BookingStack';
+import FavoritesScreen from '../screens/favorites/FavoriteScreen';
+import ProfileStack from './ProfileStack';
 
 const Tab = createBottomTabNavigator();
 
@@ -33,15 +32,23 @@ const BottomTabNavigator = () => {
         },
       }}
     >
-      <Tab.Screen name="Home" component={HomeScreen} />
+      {/* Home booking flow */}
+      <Tab.Screen
+        name="HomeTab"
+        component={HomeStackNavigator}
+        options={{ title: 'Home' }}
+      />
 
-      <Tab.Screen name="Bookings" component={BookingListScreen} />
+      {/* Booking history */}
+      <Tab.Screen
+        name="BookingsTab"
+        component={BookingStackNavigator}
+        options={{ title: 'Bookings' }}
+      />
 
       <Tab.Screen name="Favorites" component={FavoritesScreen} />
 
-      <Tab.Screen name="Notifications" component={NotificationScreen} />
-
-      <Tab.Screen name="Profile" component={ProfileScreen} />
+      <Tab.Screen name="Profile" component={ProfileStack} />
     </Tab.Navigator>
   );
 };

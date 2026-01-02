@@ -10,7 +10,7 @@ export const styles = StyleSheet.create({
 
   sectionTitle: {
     fontSize: typography.fontSize.lg,
-    fontWeight: typography.fontWeight.semibold,
+    fontWeight: 600,
     color: colors.textPrimary,
     marginBottom: spacing.md,
   },
@@ -26,7 +26,7 @@ export const styles = StyleSheet.create({
 
   userName: {
     fontSize: typography.fontSize.md,
-    fontWeight: typography.fontWeight.semibold,
+    fontWeight: 600,
     color: colors.textPrimary,
   },
 
@@ -57,6 +57,6 @@ export const styles = StyleSheet.create({
   showMoreText: {
     fontSize: typography.fontSize.sm,
     color: colors.primary,
-    fontWeight: typography.fontWeight.medium,
+    fontWeight: 500,
   },
 });
