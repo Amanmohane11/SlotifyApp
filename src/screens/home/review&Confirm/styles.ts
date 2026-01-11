@@ -69,6 +69,16 @@ const styles = StyleSheet.create({
     fontSize: typography.fontSize.sm,
     color: colors.primary,
   },
+
+
+    errorText: {
+    color: '#D32F2F',        // accessible red (Material-style)
+    fontSize: 14,
+    lineHeight: 20,
+    marginTop: 12,
+    textAlign: 'center',
+    paddingHorizontal: 16,
+  },
 });
 
 export default styles;

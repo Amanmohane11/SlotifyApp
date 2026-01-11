@@ -17,28 +17,29 @@ export const profileMenuItems = [
     id: '2',
     title: 'Support & FAQ',
     icon: 'help-circle-outline',
-    // screen: 'Support',
+    screen: 'Support',
   },
   {
     id: '3',
     title: 'Share App',
     icon: 'share-social-outline',
-    // action: 'share',
+    action: 'share',
   },
   {
     id: '4',
-    title: 'Privacy Policy',
-    icon: 'shield-checkmark-outline',
-    // screen: 'PrivacyPolicy',
+    title: 'Settings',
+    icon: 'settings-outline',
+    screen: 'Settings',
   },
   {
     id: '5',
     title: 'Logout',
     icon: 'log-out-outline',
+    action: 'logout',
     danger: true,
-    // action: 'logout',
   },
 ];
+
 
  export const dummyBanners: Banner[] =[
   {

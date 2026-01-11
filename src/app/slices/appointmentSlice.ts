@@ -35,6 +35,8 @@ export const fetchUpcomingAppointments = createAsyncThunk<
 >('appointments/fetchUpcoming', async (_, { rejectWithValue }) => {
   try {
     const module = await import('../../assets/data/saloonData');
+
+    // ⚠️ Ensure mock data includes startTime & endTime
     return module.upcomingAppointments as Appointment[];
   } catch {
     return rejectWithValue('Unable to load upcoming appointments');
@@ -49,6 +51,7 @@ export const fetchPastAppointments = createAsyncThunk<
 >('appointments/fetchPast', async (_, { rejectWithValue }) => {
   try {
     const module = await import('../../assets/data/salonDetail');
+
     return module.pastBookingsData as Appointment[];
   } catch {
     return rejectWithValue('Unable to load past appointments');

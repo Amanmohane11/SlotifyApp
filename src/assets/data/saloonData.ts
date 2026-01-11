@@ -130,7 +130,8 @@ export const upcomingAppointments = [
     salonName: 'Luxe Cut & Shave',
     serviceNames: ['Haircut', 'Beard Trim'],
     date: '2025-10-24',
-    time: '2:30 PM',
+    startTime: '2:30 PM',
+    endTime: '3:30 PM', // assumed 1 hour
     professionalName: 'Amit Sharma',
     status: 'upcoming',
     image: require('../images/saloonImage.jpg'),
@@ -141,12 +142,14 @@ export const upcomingAppointments = [
     salonName: 'Luxe Cut & Shave',
     serviceNames: ['Hair Spa'],
     date: '2025-10-24',
-    time: '6:00 PM',
+    startTime: '6:00 PM',
+    endTime: '7:00 PM', // assumed 1 hour
     professionalName: 'Rohit Verma',
     status: 'upcoming',
     image: require('../images/salonImage2.jpg'),
   },
 ];
+
 
 
 

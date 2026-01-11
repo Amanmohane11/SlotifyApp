@@ -94,4 +94,8 @@ export const styles = StyleSheet.create({
     lineHeight: 20,
     marginBottom: spacing.xl,
   },
+  
+  actionButton: {
+  marginTop: spacing.sm,
+},
 });

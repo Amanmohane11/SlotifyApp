@@ -1,11 +1,8 @@
-export interface LiveLocationPayload {
-  latitude: number;
-  longitude: number;
-}
+import type { LiveLocation, Gender } from './common';
 
 export interface UserDetailPayload {
-  name: string;
-  gender: 'male' | 'female' | 'other';
-  city: string;
-  liveLocation?: LiveLocationPayload;
+  name?: string;
+  gender?: Gender;
+  city?: string;
+  liveLocation?: LiveLocation | null;
 }

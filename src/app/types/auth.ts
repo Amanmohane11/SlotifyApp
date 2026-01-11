@@ -1,6 +1,4 @@
-import type { LiveLocationPayload } from './user';
-
-/* ---------------- USER ---------------- */
+import type { LiveLocation, Gender } from './common';
 
 export interface User {
   id: string;
@@ -9,16 +7,12 @@ export interface User {
   // optional profile fields
   name?: string;
   city?: string;
-  gender?: 'male' | 'female' | 'other';
+  gender?: Gender;
 
-  // profile status
   profileCompleted: boolean;
 
-  // ✅ ADD THIS
-  liveLocation?: LiveLocationPayload | null;
+  liveLocation?: LiveLocation | null;
 }
-
-/* ---------------- AUTH RESPONSE ---------------- */
 
 export interface AuthResponse {
   token: string;

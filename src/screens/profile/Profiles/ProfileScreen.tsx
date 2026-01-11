@@ -1,27 +1,27 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, ScrollView } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { styles } from './styles';
 
-import {
-  profileData,
-  profileMenuItems,
-} from '../../../assets/data/saloonData2';
-import PrimaryButton from '../../../components/buttons/PrimaryButton';
+import { profileMenuItems } from '../../../assets/data/saloonData2';
 import { MenuItem } from '../../../components/menuItem/MenuItem';
 
-const ProfileScreen = () => {
-  // const handleMenuAction = (action?: string) => {
-  //   if (action === 'logout') {
-  //     // logout logic
-  //     console.log('Logout');
-  //   }
+import type { RootState, AppDispatch } from '../../../app/store';
+import { fetchUserDetails } from '../../../app/slices/userDetailSlice';
 
-  //   if (action === 'share') {
-  //     // share logic
-  //     console.log('Share App');
-  //   }
-  // };
+const ProfileScreen = () => {
+  const dispatch = useDispatch<AppDispatch>();
+
+  const { profile, loading } = useSelector(
+    (state: RootState) => state.userDetail
+  );
+
+  useEffect(() => {
+    if (!profile) {
+      dispatch(fetchUserDetails());
+    }
+  }, [dispatch, profile]);
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
@@ -34,15 +34,18 @@ const ProfileScreen = () => {
       </View>
 
       {/* User Info */}
-      <Text style={styles.userName}>{profileData.name}</Text>
-      <Text style={styles.phone}>{profileData.phone}</Text>
-
-      {/* Edit Profile */}
-      <PrimaryButton
-        title="Edit Profile"
-        onPress={() => {}}
-        style={styles.editButton}
-      />
+      {loading ? (
+        <Text style={styles.phone}>Loading profile...</Text>
+      ) : profile ? (
+        <>
+          <Text style={styles.userName}>
+            {profile.name ?? 'User'}
+          </Text>
+          <Text style={styles.phone}>{profile.mobile}</Text>
+        </>
+      ) : (
+        <Text style={styles.phone}>No profile found</Text>
+      )}
 
       {/* Menu */}
       <View style={styles.menuContainer}>
@@ -55,9 +58,6 @@ const ProfileScreen = () => {
             route={(item as any).route}
             nested={(item as any).nested}
             danger={item.danger}
-            // onPress={
-            //   item.action ? () => handleMenuAction(item?.action) : undefined
-            // }
           />
         ))}
       </View>

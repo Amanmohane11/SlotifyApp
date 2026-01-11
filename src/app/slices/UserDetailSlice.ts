@@ -1,20 +1,17 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import type { RootState } from '../store';
 import type { User } from '../types/auth';
-import { UserDetailPayload } from '../types/user';
+import type { UserDetailPayload } from '../types/user';
 
-
+import { MOCK_USER } from '../../assets/data/user';
 
 /* ---------------- STATE ---------------- */
 
 interface UserDetailState {
-  profile: User | null;        // ✅ FIXED
+  profile: User | null;
   loading: boolean;
   error: string | null;
 }
-
-/* ---------------- INITIAL STATE ---------------- */
 
 const initialState: UserDetailState = {
   profile: null,
@@ -22,86 +19,75 @@ const initialState: UserDetailState = {
   error: null,
 };
 
-/* ---------------- API ---------------- */
-
-const API_BASE_URL = 'https://your-api.com/api';
-
 /* ---------------- THUNKS ---------------- */
 
 /**
- * ADD / UPDATE user details (POST)
- */
-export const submitUserDetails = createAsyncThunk<
-  User,
-  UserDetailPayload,
-  { state: RootState; rejectValue: string }
->('userDetail/submit', async (payload, { getState, rejectWithValue }) => {
-  try {
-    const token = getState().auth.token;
-
-    if (!token) {
-      return rejectWithValue('User not authenticated');
-    }
-
-    const response = await fetch(`${API_BASE_URL}/user/details`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(payload), // includes liveLocation
-    });
-
-    if (!response.ok) {
-      const errorBody = await response.json().catch(() => null);
-      return rejectWithValue(
-        errorBody?.message ?? 'Failed to save user details',
-      );
-    }
-
-    const updatedUser: User = await response.json();
-
-    // Persist user (used by restoreSession)
-    await AsyncStorage.setItem('user', JSON.stringify(updatedUser));
-
-    return updatedUser;
-  } catch {
-    return rejectWithValue('Network error. Please try again.');
-  }
-});
-
-/**
- * FETCH user details from DB (GET)
+ * FETCH user details
+ * - Reads from AsyncStorage first
+ * - Falls back to MOCK_USER
  */
 export const fetchUserDetails = createAsyncThunk<
   User,
   void,
-  { state: RootState; rejectValue: string }
->('userDetail/fetch', async (_, { getState, rejectWithValue }) => {
+  { rejectValue: string }
+>('userDetail/fetch', async (_, { rejectWithValue }) => {
   try {
-    const token = getState().auth.token;
+    const storedProfile = await AsyncStorage.getItem('user_profile');
 
-    if (!token) {
-      return rejectWithValue('User not authenticated');
+    if (storedProfile) {
+      return JSON.parse(storedProfile) as User;
     }
 
-    const response = await fetch(`${API_BASE_URL}/user/details`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    // First-time app use
+    await AsyncStorage.setItem(
+      'user_profile',
+      JSON.stringify(MOCK_USER)
+    );
 
-    if (!response.ok) {
-      return rejectWithValue('Failed to fetch user details');
-    }
-
-    const user: User = await response.json();
-
-    await AsyncStorage.setItem('user', JSON.stringify(user));
-
-    return user;
+    return MOCK_USER;
   } catch {
-    return rejectWithValue('Network error. Please try again.');
+    return rejectWithValue('Failed to load user profile');
+  }
+});
+
+/**
+ * UPDATE user details (partial-safe)
+ */
+export const submitUserDetails = createAsyncThunk<
+  User,
+  UserDetailPayload,
+  { rejectValue: string }
+>('userDetail/submit', async (payload, { rejectWithValue }) => {
+  try {
+    const storedProfile = await AsyncStorage.getItem('user_profile');
+    const existingUser: User = storedProfile
+      ? JSON.parse(storedProfile)
+      : MOCK_USER;
+
+    const mergedUser: User = {
+      ...existingUser,
+      ...payload,
+    };
+
+    const profileCompleted = Boolean(
+      mergedUser.name &&
+      mergedUser.city &&
+      mergedUser.gender
+    );
+
+    const updatedUser: User = {
+      ...mergedUser,
+      profileCompleted,
+    };
+
+    await AsyncStorage.setItem(
+      'user_profile',
+      JSON.stringify(updatedUser)
+    );
+
+    return updatedUser;
+  } catch {
+    return rejectWithValue('Failed to save user details');
   }
 });
 
@@ -115,24 +101,11 @@ const userDetailSlice = createSlice({
       state.profile = null;
       state.loading = false;
       state.error = null;
+      AsyncStorage.removeItem('user_profile');
     },
   },
   extraReducers: builder => {
     builder
-      /* SUBMIT */
-      .addCase(submitUserDetails.pending, state => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(submitUserDetails.fulfilled, (state, action) => {
-        state.loading = false;
-        state.profile = action.payload; // ✅ store full user
-      })
-      .addCase(submitUserDetails.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload ?? 'Something went wrong';
-      })
-
       /* FETCH */
       .addCase(fetchUserDetails.pending, state => {
         state.loading = true;
@@ -140,9 +113,23 @@ const userDetailSlice = createSlice({
       })
       .addCase(fetchUserDetails.fulfilled, (state, action) => {
         state.loading = false;
-        state.profile = action.payload; // ✅ store full user
+        state.profile = action.payload;
       })
       .addCase(fetchUserDetails.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload ?? 'Something went wrong';
+      })
+
+      /* SUBMIT */
+      .addCase(submitUserDetails.pending, state => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(submitUserDetails.fulfilled, (state, action) => {
+        state.loading = false;
+        state.profile = action.payload;
+      })
+      .addCase(submitUserDetails.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload ?? 'Something went wrong';
       });
